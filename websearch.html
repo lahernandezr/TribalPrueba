@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v4.1.1">
+    <title>Tribal Evaluación Backend</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/offcanvas/">    
+    <!-- Bootstrap core CSS -->
+    <link href="https://getbootstrap.com/docs/4.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<meta name="msapplication-config" content="https://getbootstrap.com//docs/4.5/assets/img/favicons/browserconfig.xml">
+<meta name="theme-color" content="#563d7c">
+
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="https://getbootstrap.com/docs/4.5/examples/offcanvas/offcanvas.css" rel="stylesheet">
+  </head>
+  <body class="bg-light">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+  <a class="navbar-brand mr-auto mr-lg-0" href="#">Busqueda en servicios</a>
+  <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+      
+    </ul>
+    <div class="form-inline my-2 my-lg-0">
+      <input id="inputSearch" class="form-control mr-sm-2" type="text" placeholder="Buscar" aria-label="Buscar">
+      <button id="btSearch" type="button" class="btn btn-outline-success my-2 my-sm-0"  >Buscar</button>
+    </div>
+  </div>
+</nav>
+
+<main role="main" class="container">
+    <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-purple rounded shadow-sm">  
+        <div id="result">Resultados: </div>      
+        <div class="lh-100">          
+        </div>
+      </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Resultados Itunes</h6>
+    <div id="result_itunes">
+
+    </div>   
+    <small class="d-block text-right mt-3">
+      <a href="#" id="result_count_itunes">Total: 0</a>
+    </small>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Resultados Maze TV</h6>
+    <div id="result_maze">
+
+    </div>   
+    <small class="d-block text-right mt-3">
+      <a href="#" id="result_count_maze">Total: 0</a>
+    </small>
+  </div>
+
+  
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Resultados Personas</h6>
+    <div id="result_person">
+
+    </div>   
+    <small class="d-block text-right mt-3">
+      <a href="#" id="result_count_person">Total: 0</a>
+    </small>
+  </div>
+ 
+</main>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+      <script>window.jQuery || document.write('<script src="https://getbootstrap.com/docs/4.5/assets/js/vendor/jquery.slim.min.js"><\/script>')</script><script src="https://getbootstrap.com/docs/4.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+        <script src="https://getbootstrap.com/docs/4.5/examples/offcanvas/offcanvas.js"></script></body>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-full-width",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "500",
+            "timeOut": "2500",
+            "extendedTimeOut": "2000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }  
+        $(document).ready(function(){
+            //toastr["success"]("Se ha agregado a tu orden!");   
+            $("#inputSearch").keyup(function(event) {
+            if (event.keyCode === 13) {
+                
+                $("#btSearch").click();
+            }
+        });
+
+
+            $("#btSearch").click(function(){                
+                if($("#inputSearch").val() ==  ""){
+                    toastr["warning"]("Ingresa por favor la información a buscar");   
+                    //alert("Ingresa por favor la información a buscar");
+                }
+                else{
+                    toastr["info"]("Buscando información");  
+                    console.log("http://localhost:8080/busqueda/"+$("#inputSearch").val());
+                    $.ajax({
+                        url: "http://localhost:8080/busqueda/"+$("#inputSearch").val(),
+                        type:"GET",
+                        dataType: 'json',    
+                        contentType: "application/json; charset=utf-8",    
+                            success: function(result){
+                                var resultItemsItunes = "";
+                                console.log(result);
+                                $("#result").html("Resultados: "+result.message);
+                                var countItunes = 0;
+                                result.result.itunesResponse.results.forEach(function(row) {
+                                    console.log();
+                                    if(row.kind == "song")
+                                        text_description = 'Track: '+row.trackName+" Colección:"+row.collectionName;
+                                    else
+                                    if(row.kind == "feature-movie")
+                                        text_description = 'Pelicula: '+row.trackName+" Colección:"+row.collectionName;
+                                    else
+                                        text_description = 'Libro: '+row.trackName+" Colección:"+row.collectionName;
+                                    resultItemsItunes = resultItemsItunes + '<div class="media text-muted pt-3">'
+                                        +'<svg class="bd-placeholder-img mr-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 32x32">'
+                                        +'<title>Placeholder</title>'
+                                        +'<rect width="100%" height="100%" fill="#007bff"/>'
+                                        +'<text x="50%" y="50%" fill="#007bff" dy=".3em">32x32</text></svg>'
+                                        +'<p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray"><strong class="d-block text-gray-dark">@'+row.artistName+'</strong>'+text_description+'</p>'
+                                        +'</div>';
+                                    countItunes = countItunes + 1
+                                });
+
+                                $("#result_count_itunes").html("Total: "+countItunes);
+                                $("#result_itunes").html(resultItemsItunes);
+                                var countMaze = 0;
+                                var resultItemsMaze = "";
+                                result.result.mazeTvResponse.shows.forEach(function(row) {
+                                    console.log(); 
+                                    text_description = 'Lenguaje: '+row.show.language;
+                                    resultItemsMaze = resultItemsMaze + '<div class="media text-muted pt-3">'
+                                        +'<svg class="bd-placeholder-img mr-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 32x32">'
+                                        +'<title>Placeholder</title>'
+                                        +'<rect width="100%" height="100%" fill="#007bff"/>'
+                                        +'<text x="50%" y="50%" fill="#007bff" dy=".3em">32x32</text></svg>'
+                                        +'<p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray"><strong class="d-block text-gray-dark">@'+row.show.name+'</strong>'+text_description+'</p>'
+                                        +'</div>';
+                                    countMaze = countMaze + 1
+                                });
+                                $("#result_count_maze").html("Total: "+countMaze);
+                                $("#result_maze").html(resultItemsMaze);
+                                
+
+                                var countPerson = 0;
+                                var resultItemsPerson = "";
+                                result.result.wsldResponse.persons.forEach(function(row) {
+                                    console.log(); 
+                                    text_description = 'Datos: DOB:'+row.dob + " SNN:"+row.snn;
+                                    resultItemsPerson = resultItemsPerson + '<div class="media text-muted pt-3">'
+                                        +'<svg class="bd-placeholder-img mr-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 32x32">'
+                                        +'<title>Placeholder</title>'
+                                        +'<rect width="100%" height="100%" fill="#007bff"/>'
+                                        +'<text x="50%" y="50%" fill="#007bff" dy=".3em">32x32</text></svg>'
+                                        +'<p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray"><strong class="d-block text-gray-dark">@'+row.name+'</strong>'+text_description+'</p>'
+                                        +'</div>';
+                                        countPerson = countPerson + 1
+                                });
+                                $("#result_count_person").html("Total: "+countPerson);
+                                $("#result_person").html(resultItemsPerson);
+                                                                
+                                
+                            },
+                            error: function(error){
+                            console.log("No consulto la informacion");
+                            console.log(error);
+                            }    
+                        }); 
+                    /*
+                    $.get( "http://localhost:8080/busqueda/"+$("#inputSearch").val(), function( data ) {
+                        
+                    });*/
+                }
+            });
+        });
+    </script>
+
+</html>
